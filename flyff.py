@@ -6,22 +6,22 @@ import win32con
 import json
 import os
 
-# Costanti dei tasti
+# Key costant
 KEYBD_CONSTS = {'F1': 0x70, 'F2': 0x71, 'F3': 0x72, 'F4': 0x73, 'F5': 0x74,
                 'F6': 0x75, 'F7': 0x76, 'F8': 0x77, 'F9': 0x78}
 
-# Variabili globali
+# Global Var
 handlers = []
 primary_client_id = None
 secondary_client_id = None
 
-# Configurazione mappatura dei tasti
+# Key Mapping
 key_mapping = {key: key for key in KEYBD_CONSTS}
 
-# File JSON per salvare e caricare la mappatura
+# JSON config
 KEY_MAPPING_FILE = "keymapping.json"
 
-# Funzione per caricare la mappatura dei tasti dal file JSON
+# Function to load config
 def load_key_mapping():
     global key_mapping
     if os.path.exists(KEY_MAPPING_FILE):
@@ -31,7 +31,7 @@ def load_key_mapping():
         except Exception as e:
             messagebox.showerror("Error", f"Error loading key mapping: {e}")
 
-# Funzione per salvare la mappatura dei tasti nel file JSON
+# Function to save the keymapping
 def save_key_mapping():
     try:
         with open(KEY_MAPPING_FILE, "w") as f:
@@ -39,14 +39,14 @@ def save_key_mapping():
     except Exception as e:
         messagebox.showerror("Error", f"Error saving key mapping: {e}")
 
-# Funzione per trovare i client aperti
+# Function to find client
 def enumHandler(hwnd, lParam):
     if win32gui.IsWindowVisible(hwnd):
         win_name = win32gui.GetWindowText(hwnd)
         if "Insanity MMORPG (" in win_name:
             handlers.append([hwnd, win_name])
 
-# Attacca il client
+# Attach client
 def attach_client():
     global handlers
     handlers = []
@@ -59,7 +59,7 @@ def attach_client():
     else:
         messagebox.showinfo("Info", "No clients found.")
 
-# Seleziona il client secondario e primario
+# add primary and seconndary client
 def select_client():
     global primary_client_id, secondary_client_id
     selected_index = client_listbox.curselection()
@@ -81,12 +81,12 @@ def select_client():
     else:
         messagebox.showinfo("Info", "Please select a client first.")
 
-# Aggiorna le etichette dei client selezionati
+# Label to upload primary and secondary
 def update_client_labels(primary_name, secondary_name):
     primary_client_label.config(text=f"Primary Client:\n{primary_name}")
     secondary_client_label.config(text=f"Secondary Client:\n{secondary_name}")
 
-# Invia un tasto al client selezionato
+# Send key to secondary client
 def send_key(client_id, key):
     if client_id:
         win32gui.SendMessage(client_id, win32con.WM_KEYDOWN, KEYBD_CONSTS[key], 0)
@@ -94,7 +94,7 @@ def send_key(client_id, key):
     else:
         messagebox.showinfo("Info", "No client selected.")
 
-# Controlla i tasti premuti e li invia al client secondario
+# Check key
 def check_keys():
     for key in KEYBD_CONSTS:
         if win32api.GetAsyncKeyState(KEYBD_CONSTS[key]):
@@ -134,26 +134,26 @@ client_listbox.pack(pady=5)
 select_button = tk.Button(main_frame, text="Select Client", command=select_client, font=button_font, bg="#4C566A", fg="#ECEFF4")
 select_button.pack(pady=5)
 
-# **Frame per mostrare i client selezionati**
+# Frame for client
 client_frame = tk.Frame(root, bg="#2E3440")
 client_frame.pack(pady=5)
 
-# Etichette per i client selezionati
+# Laber client
 primary_client_label = tk.Label(client_frame, text="Primary Client:\nNone", font=label_font, fg="#88C0D0", bg="#2E3440")
 primary_client_label.grid(row=0, column=0, padx=10)
 
 secondary_client_label = tk.Label(client_frame, text="Secondary Client:\nNone", font=label_font, fg="#88C0D0", bg="#2E3440")
 secondary_client_label.grid(row=0, column=1, padx=10)
 
-# **Frame per la mappatura dei tasti**
+# frame keymapping
 key_mapping_frame = tk.Frame(root, bg="#2E3440")
 key_mapping_frame.pack(pady=5)
 
-# Titolo della sezione Key Mapping
+# Title
 key_mapping_label = tk.Label(key_mapping_frame, text="Key Mapping Configuration", font=title_font, fg="#ECEFF4", bg="#2E3440")
 key_mapping_label.pack(pady=5)
 
-# Mappatura dei tasti in orizzontale (3 tasti per riga) - solo F1, F2, F3
+# Keymapping
 keys = ['F1', 'F2', 'F3']  # Limitato a F1, F2, F3
 for i in range(0, len(keys), 3):
     row_frame = tk.Frame(key_mapping_frame, bg="#2E3440")
@@ -181,4 +181,3 @@ load_key_mapping()
 root.mainloop()
 
 save_key_mapping()
-
