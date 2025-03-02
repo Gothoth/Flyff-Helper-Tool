@@ -6,7 +6,7 @@ import win32con
 import json
 import os
 
-# Key costant
+# Key constant
 KEYBD_CONSTS = {'F1': 0x70, 'F2': 0x71, 'F3': 0x72, 'F4': 0x73, 'F5': 0x74,
                 'F6': 0x75, 'F7': 0x76, 'F8': 0x77, 'F9': 0x78}
 
@@ -36,6 +36,7 @@ def save_key_mapping():
     try:
         with open(KEY_MAPPING_FILE, "w") as f:
             json.dump(key_mapping, f, indent=4)
+        messagebox.showinfo("Info", "Key mapping saved successfully.")
     except Exception as e:
         messagebox.showerror("Error", f"Error saving key mapping: {e}")
 
@@ -59,7 +60,7 @@ def attach_client():
     else:
         messagebox.showinfo("Info", "No clients found.")
 
-# add primary and seconndary client
+# Add primary and secondary client
 def select_client():
     global primary_client_id, secondary_client_id
     selected_index = client_listbox.curselection()
@@ -102,6 +103,12 @@ def check_keys():
                 send_key(secondary_client_id, key_mapping[key])
     root.after(100, check_keys)
 
+# Function to save key mapping manually
+def save_mapping_button_click():
+    save_key_mapping()
+
+# Create main window after loading key mapping
+load_key_mapping()
 
 root = tk.Tk()
 root.title("Insanity MMORPG Tool")
@@ -109,27 +116,21 @@ root.geometry("480x400")
 root.configure(bg="#2E3440")
 root.attributes("-topmost", True)
 
-
 title_font = font.Font(family="Helvetica", size=12, weight="bold")
 label_font = font.Font(family="Helvetica", size=10)
 button_font = font.Font(family="Helvetica", size=9)
 
-
 main_frame = tk.Frame(root, bg="#2E3440")
 main_frame.pack(pady=10)
-
 
 main_label = tk.Label(main_frame, text="Client Selection", font=title_font, fg="#ECEFF4", bg="#2E3440")
 main_label.pack()
 
-
 attach_button = tk.Button(main_frame, text="Attach Client", command=attach_client, font=button_font, bg="#4C566A", fg="#ECEFF4")
 attach_button.pack(pady=5)
 
-
 client_listbox = tk.Listbox(main_frame, width=50, height=4, bg="#3B4252", fg="#ECEFF4", font=label_font)
 client_listbox.pack(pady=5)
-
 
 select_button = tk.Button(main_frame, text="Select Client", command=select_client, font=button_font, bg="#4C566A", fg="#ECEFF4")
 select_button.pack(pady=5)
@@ -138,7 +139,7 @@ select_button.pack(pady=5)
 client_frame = tk.Frame(root, bg="#2E3440")
 client_frame.pack(pady=5)
 
-# Laber client
+# Label client
 primary_client_label = tk.Label(client_frame, text="Primary Client:\nNone", font=label_font, fg="#88C0D0", bg="#2E3440")
 primary_client_label.grid(row=0, column=0, padx=10)
 
@@ -171,13 +172,10 @@ for i in range(0, len(keys), 3):
             dropdown.config(bg="#4C566A", fg="#ECEFF4", font=("Helvetica", 9))
             dropdown.grid(row=1, column=j * 2, padx=5)
 
+# Save button to save key mappings
+save_button = tk.Button(root, text="Save Key Mapping", command=save_mapping_button_click, font=button_font, bg="#4C566A", fg="#ECEFF4")
+save_button.pack(pady=10)
 
 root.after(100, check_keys)
 
-
-load_key_mapping()
-
-
 root.mainloop()
-
-save_key_mapping()
